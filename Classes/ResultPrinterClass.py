@@ -1,5 +1,5 @@
+from Classes.ConfigHandlerClass import ConfigHandler
 from Classes.DBHandlerClass import session_scope, Vacancies, Platform
-from config import ROOT_DIR
 import os
 
 
@@ -18,41 +18,41 @@ class ResultPrinter:
             'a:active {color: #0000FF;}  /* selected link */ '\
             '</style></head>\n'
 
-    def print_result_to_html(self, search_type, open_html_after_finish: bool = True):
-        html_result_file_name = 'result.html'
-        html_result_file_path = ROOT_DIR + '/' + html_result_file_name
-
-        with open(html_result_file_path, 'w') as html_file:
+    def print_result_to_html(self, seach_topic_list: list, open_html_after_finish: bool = True):
+        with open(ConfigHandler.RESULT_HTML_PATH, 'w') as html_file:
             html_file.write(self.html_file_header)
-            html_file.write(f'<body><h1>Search Type: {search_type}</h1>\n')
 
-            with session_scope(dbms=self.dbms) as session:
-                # Get all platform names
-                platform_names = []
-                result_rows = session.query(Platform.name).all()
+            for search_topic in seach_topic_list:
+                html_file.write(f'<body><h1>Search Type: {search_topic}</h1>\n')
 
-                for row in result_rows:
-                    platform_names.extend(list(row))
-
-                print(platform_names)
-
-                for platform in platform_names:
-                    html_file.write(f'<h2>{platform}</h1>')
-                    html_file.write('<ul>')
-
-                    # Get all entries in database for this platform
-                    result_rows = session.query(Vacancies)\
-                        .filter(Vacancies.platform == platform, Vacancies.search_type == search_type).all()
-                    print(result_rows)
+                with session_scope(dbms=self.dbms) as session:
+                    # Get all platform names
+                    platform_names = []
+                    result_rows = session.query(Platform.name).all()
 
                     for row in result_rows:
-                        html_file.write(f'<li style="padding-bottom: 4px;"><a style="text-decoration: none;" href="{row.url}">{row.title}</a> ({row.company})</li>')
+                        platform_names.extend(list(row))
 
-                    html_file.write('</ul>')
+                    print(platform_names)
+
+                    for platform in platform_names:
+                        html_file.write(f'<h2>{platform}</h1>')
+                        html_file.write('<ul>')
+
+                        # Get all entries in database for this platform
+                        result_rows = session.query(Vacancies)\
+                            .filter(Vacancies.platform == platform, Vacancies.search_topic == search_topic).all()
+                        print(result_rows)
+
+                        for row in result_rows:
+                            html_file.write(f'<li style="padding-bottom: 4px;"><a style="text-decoration: none;" '
+                                            f'href="{row.url}">{row.title}</a> ({row.company})</li>')
+
+                        html_file.write('</ul><br>')
 
             html_file.write('</html></body>\n')
 
         if open_html_after_finish:
-            os.system(html_result_file_name)
+            os.system(ConfigHandler.RESULT_HTML_FILE_NAME)
 
 

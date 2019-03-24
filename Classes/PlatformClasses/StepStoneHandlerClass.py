@@ -1,8 +1,5 @@
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-
 from Classes.PlatformClasses.PlatformHandlerBaseClass import PlatformHandlerBase
+from Classes.ConfigHandlerClass import ConfigHandler
 
 from datetime import datetime
 import time
@@ -22,10 +19,21 @@ class StepStoneHandler(PlatformHandlerBase):
                              '3eaf-4edb-9853-51d91ff34c97&fsk=658860&an=facets&li=100&fid=90002&fn=experiences&fa=' \
                              'deselect'
 
-    def _get_vacancy_links(self):
+    def _get_vacancy_links(self, search_topic: str = None) -> list:
+        """
+        Open the search-url provided through the config-url for the provided search-topic. Read all job posting entries,
+        prease next until there are no more results and return the resulting-list.
+        :return: Return a list of dictionaries. One dictionary for each job posting.
+        """
+        if search_topic is None or search_topic not in ConfigHandler.search_types_and_urls.keys():
+            raise ValueError("Search topic must be included in the config-json and not None.")
+
+        elif self.platform_name not in ConfigHandler.search_types_and_urls[search_topic].keys():
+            raise ValueError(f"Platform Name: '{self.platform_name}' could not be found in the config-json-file.")
+
         vacancy_list = []
 
-        self.browser.get(self.search_adress)
+        self.browser.get(ConfigHandler.search_types_and_urls[search_topic][self.platform_name])
 
         page = 0
 
@@ -34,7 +42,7 @@ class StepStoneHandler(PlatformHandlerBase):
 
             # TODO: Time sleep takes to much time. I wait for an ajax-request to finish which is quicker.
             #  HOW could I explicitly wait? Waiting for an element does not work ...
-            time.sleep(1)
+            time.sleep(2)
 
             elements = self.browser.find_elements_by_css_selector('.job-element-row')
 

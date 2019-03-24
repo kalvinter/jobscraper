@@ -6,11 +6,9 @@ from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 
 import os
-from typing import Tuple
+from datetime import datetime
 
-
-#db_path = f"sqlite:///{os.getcwd()}\\job_scraper.db"
-#engine = create_engine(db_path, echo=True)
+# Instantiate declarative base. Necessary for declaring tables as classes
 Base = declarative_base()
 
 
@@ -21,7 +19,7 @@ def session_scope(dbms):
     try:
         yield session
         session.commit()
-    except:
+    except Exception:
         session.rollback()
         raise
     finally:
@@ -102,28 +100,20 @@ class Vacancies(Base):
     __tablename__ = "vacancies"
 
     id = Column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True)
-    search_type = Column(String)
+    search_topic = Column(String)
     platform = Column(ForeignKey('platform.name'))
     company = Column(String)
     date = Column(Date)
     url = Column(String)
     title = Column(String)
 
-    def __init__(self, platform, search_type, date, url, company, title):
+    def __init__(self, platform: str, search_topic: str, date: datetime, url: str, company: str, title: str):
         self.platform = platform
-        self.search_type = search_type
+        self.search_topic = search_topic
         self.date = date
         self.url = url
         self.company = company
         self.title = title
-
-    def __str__(self):
-        return f"{str(self.id)}: {self.platform}; {self.date}; {self.url}; {self.title}"
-
-    def save(self, dbms):
-        insert_query = f"INSERT INTO {self.__tablename__} (platform, date, url, title, text) " \
-            f"VALUES({self.platform}, {self.date}, {self.url}, {self.title});"
-        dbms.execute_query(insert_query, insert_query=True)
 
 
 class Platform(Base):
@@ -133,14 +123,6 @@ class Platform(Base):
     name = Column(String, primary_key=True)
     base_address = Column(String)
 
-    def __init__(self, name, base_address):
+    def __init__(self, name: str, base_address: str):
         self.name = name
         self.base_address = base_address
-
-    def __str__(self):
-        return f"{self.name}: {self.base_address}"
-
-    def save(self, dbms):
-        insert_query = f"INSERT INTO {self.__tablename__} (platform, date, url, title, text) " \
-            f"VALUES({self.name}, {self.base_address};"
-        dbms.execute_query(insert_query, insert_query=True)

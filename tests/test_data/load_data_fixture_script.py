@@ -28,6 +28,6 @@ def load_data_scripture(dbms):
             for row in platform_file:
                 date = datetime.strptime(row['date'], '%Y-%m-%d')
                 session.add(
-                    Vacancies(platform=row['platform'], search_type=row['search_type'], date=date,
+                    Vacancies(platform=row['platform'], search_topic=row['search_type'], date=date,
                               url=row['url'], company=row['company'], title=row['title'])
                 )

@@ -1,3 +1,4 @@
+from Classes.ConfigHandlerClass import ConfigHandler
 from Classes.DBHandlerClass import DBHandler
 from Classes.BrowserHandlerClass import BrowserHandler
 from Classes.PlatformRegistryClass import PlatformRegistry
@@ -18,6 +19,9 @@ def main():
                              'in the database')
     args = parser.parse_args()
 
+    # Parse and set Config-Values
+    ConfigHandler.validate_config_file()
+
     # Initialize Base Classes
     dbms = DBHandler(DBHandler.SQLITE, db_name='job_scraper.sqlite')
     dbms.create_database_and_tables()
@@ -35,11 +39,13 @@ def main():
         platform_registry.load_initial_data()
 
         for platform in platform_registry.platforms:
-            platform.run(search_type='Java')
+            for search_topic in ConfigHandler.search_types_and_urls.keys():
+                platform.run(search_topic=search_topic)
 
     # Print fetched vacancies from db to HTML
     result_printer = ResultPrinter(dbms=dbms, browser=browser)
-    result_printer.print_result_to_html(search_type='Java', open_html_after_finish=True)
+    result_printer.print_result_to_html(seach_topic_list=list(ConfigHandler.search_types_and_urls.keys()),
+                                        open_html_after_finish=True)
     time.sleep(1)
 
 

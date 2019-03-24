@@ -24,6 +24,6 @@ class TestPrintDisplayHTMLResult(unittest.TestCase):
         load_data_scripture(dbms=cls.dbms)
 
     def test_print_result_html(self):
-        self.result_handler.print_result_to_html(search_type='Java', open_html_after_finish=True)
+        self.result_handler.print_result_to_html(seach_topic='Java', open_html_after_finish=True)
 
 
