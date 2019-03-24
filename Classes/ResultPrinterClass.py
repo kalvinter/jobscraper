@@ -11,12 +11,20 @@ class ResultPrinter:
         self.browser = browser
         self.vacancy_template = "<li>{}</li>"
 
+        self.html_file_header = f'<html><head><style>'\
+            'a {color: rgb(0, 0, 238);}      /* unvisited link */'\
+            'a:visited {color: rgb(0, 0, 238);}  /* visited link */'\
+            'a:hover {color: rgba(117, 117, 255, 1);}  /* mouse over link */'\
+            'a:active {color: #0000FF;}  /* selected link */ '\
+            '</style></head>\n'
+
     def print_result_to_html(self, search_type, open_html_after_finish: bool = True):
         html_result_file_name = 'result.html'
         html_result_file_path = ROOT_DIR + '/' + html_result_file_name
 
         with open(html_result_file_path, 'w') as html_file:
-            html_file.write(f'<html><body><h1>Search Type: {search_type}</h1>\n')
+            html_file.write(self.html_file_header)
+            html_file.write(f'<body><h1>Search Type: {search_type}</h1>\n')
 
             with session_scope(dbms=self.dbms) as session:
                 # Get all platform names
@@ -38,12 +46,13 @@ class ResultPrinter:
                     print(result_rows)
 
                     for row in result_rows:
-                        html_file.write(f'<li><a href="{row.url}">{row.title}</a></li>')
+                        html_file.write(f'<li style="padding-bottom: 4px;"><a style="text-decoration: none;" href="{row.url}">{row.title}</a> ({row.company})</li>')
 
                     html_file.write('</ul>')
 
             html_file.write('</html></body>\n')
 
-        print(os.system(html_result_file_name))
+        if open_html_after_finish:
+            os.system(html_result_file_name)
 
 
