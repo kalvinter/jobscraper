@@ -1,7 +1,7 @@
 # jobscraper
 [![codecov](https://codecov.io/gh/kalvinter/jobscraper/branch/master/graph/badge.svg?token=dIrpvpdPVr)](https://codecov.io/gh/kalvinter/jobscraper)
 
-WebScraper for job-posting websites. Automate finding interesting job postings.
+WebScraper for job-posting websites. Automate finding interesting job postings. Spend less time looking for job postings and focus on writing your applications.
 
 ## Getting Started
 
@@ -10,8 +10,7 @@ WebScraper for job-posting websites. Automate finding interesting job postings.
 First, download the repository.
 
 The project requires a matching webdriver.exe-File. The project is currently tested for Chrome Version 73. If you use Google Chrome 
-look up your Chrome-Browser's version and download the matching webdriver.exe-File from the 
-[official source from Google](http://chromedriver.chromium.org/downloads). Put the webdriver-file in the project's 
+look up your Chrome-Browser's version by clicking on 'help' and then on 'about Google Chrome'. Then download the matching webdriver.exe-File from the [official source from Google](http://chromedriver.chromium.org/downloads). Put the webdriver-file in the project's 
 root directory (where main.py-file is located).
 
 ### Installing
@@ -35,6 +34,8 @@ There are several automated tests defined for this project. Simply run in the ro
 py run_tests.py
 ```
 
+If any of the tests fails, please let me know by opening a new issue. 
+
 ## Built With
 
 - [Selenium](https://selenium-python.readthedocs.io/)
@@ -43,7 +44,11 @@ py run_tests.py
 
 ## How to use the programme
 
-All main config.json
+All config-options are managed in the config.json-File located in the repository's root directory. There are three main config-options. 
+
+1) DRIVER_EXE_NAME: Please specify the file-name of your webdriver.exe-File. The script will look for this file-name in the repository's root directory.
+2) SEARCH_TOPICS: Each search-topic is a collection of search URLs.
+3) STOPWORDS: If a job posting's title contains one of the stopwords defined here, the job posting will be skipped and not added to the database.
 
 ### Define your own search-queries
 In config.json-File add your own search-topic.
