@@ -1,0 +1,33 @@
+{
+	"DRIVER_EXE_NAME": "non_existing_chromedriver.exe",
+  
+	 "STOPWORDS": [
+		"consultant",
+		"senior",
+		"praktikant",
+		"internship",
+		"werkstudent",
+		"lead",
+		" sap ",
+		"praktikant",
+		"praktikum",
+		" php ",
+		"studentenjob"
+	],
+
+	"PLATFORMS": {
+	
+		"KARRIERE.AT": {
+			"Java": "https://www.karriere.at/jobs/java/wien?jobLevels%5B%5D=3954&states%5B%5D=2430",
+			"Java Trainee": "https://www.stepstone.at/5/ergebnisliste.html?ke=Java&ws=Wien&ex=90001&suid=9ca21fcc-3eaf-4edb-9853-51d91ff34c97&fsk=658860&an=facets&li=100&fid=90002&fn=experiences&fa=deselect"
+		},
+
+		"STEPSTONE.AT": {
+			"Java": "https://www.stepstone.at/5/ergebnisliste.html?ke=Java&ws=Wien&ex=90001&suid=9ca21fcc-3eaf-4edb-9853-51d91ff34c97&fsk=658860&an=facets&li=100&fid=90002&fn=experiences&fa=deselect",
+			"Java Trainee": "https://www.stepstone.at/5/ergebnisliste.html?ke=Java&ws=Wien&ex=90001&suid=9ca21fcc-3eaf-4edb-9853-51d91ff34c97&fsk=658860&an=facets&li=100&fid=90002&fn=experiences&fa=deselect"
+		}
+	
+	}
+	
+
+}

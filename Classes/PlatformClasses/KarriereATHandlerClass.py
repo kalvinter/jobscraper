@@ -6,27 +6,17 @@ import time
 
 
 class KarriereATHandler(PlatformHandlerBase):
+    platform_name = 'KARRIERE.AT'
+    base_address = 'https://www.karriere.at/'
+    header = '---- # (KarriereATHandler)'
 
     def __init__(self, browser, dbms):
         super().__init__(browser=browser, dbms=dbms)
-        self.header = '---- # (KarriereATHandler)'
 
-        self.platform_name = 'karriere.at'
-        self.base_address = 'https://www.karriere.at/'
-
-        self.search_type = 'Java'
-        self.search_adress = 'https://www.karriere.at/jobs/java/wien?jobLevels%5B%5D=3954&states%5B%5D=2430'
-
-    def _get_vacancy_links(self, search_topic: str):
-        if search_topic is None or search_topic not in ConfigHandler.search_types_and_urls.keys():
-            raise ValueError("Search topic must be included in the config-json and not None.")
-
-        elif self.platform_name not in ConfigHandler.search_types_and_urls[search_topic].keys():
-            raise ValueError(f"Platform Name: '{self.platform_name}' could not be found in the config-json-file.")
-
+    def _get_vacancy_links(self, search_topic: str, search_url: str):
         vacancy_list = []
 
-        self.browser.get(ConfigHandler.search_types_and_urls[search_topic][self.platform_name])
+        self.browser.get(search_url)
 
         page = 0
 
@@ -42,25 +32,40 @@ class KarriereATHandler(PlatformHandlerBase):
             print(f'\n# {page} ------------')
             print(elements)
 
+            if not elements:
+                break
+
             for element in elements:
-                title = element.find_element_by_css_selector('h2').text
+                try:
+                    title = element.find_element_by_css_selector('h2').text
+
+                except Exception as e:
+                    print(f"{self.header}: FATAL: An unexpected error occured!")
+                    raise Exception(str(e))
 
                 check = self.apply_title_filter(title)
 
                 if not check:
                     continue
 
-                company = element.find_element_by_css_selector('.m-jobItem__company').text
-                url = element.find_element_by_css_selector('.m-jobItem__titleLink').get_attribute('href')
-                date_raw = element.find_element_by_css_selector('.m-jobItem__date').text
-                date = datetime.strptime(date_raw.replace('am ', ''), '%d.%m.%Y')
+                try:
+                    company = element.find_element_by_css_selector('.m-jobItem__company').text
+                    url = element.find_element_by_css_selector('.m-jobItem__titleLink').get_attribute('href')
+                    date_raw = element.find_element_by_css_selector('.m-jobItem__date').text
+                    date = datetime.strptime(date_raw.replace('am ', ''), '%d.%m.%Y')
+                    locaton = element.find_element_by_css_selector('.m-jobItem__locationLink').text
+
+                except Exception as e:
+                    print(f"{self.header}: FATAL: An unexpected error occured!")
+                    raise Exception(str(e))
 
                 vacancy_list.append({
                     "platform": self.platform_name,
                     "company": company,
                     "url": url,
                     "title": title,
-                    "date": date
+                    "date": date,
+                    "location": locaton,
                 })
 
             for i in vacancy_list:

@@ -18,12 +18,13 @@ class TestPrintDisplayHTMLResult(unittest.TestCase):
         browser_handler = BrowserHandler()
         cls.browser = browser_handler.get_browser()
 
-        cls.result_handler = ResultPrinter(dbms=cls.dbms, browser=cls.browser)
+        cls.result_handler = ResultPrinter(dbms=cls.dbms)
 
         # Load data fixture
         load_data_scripture(dbms=cls.dbms)
+        super().setUpClass()
 
     def test_print_result_html(self):
-        self.result_handler.print_result_to_html(seach_topic='Java', open_html_after_finish=True)
+        self.result_handler.print_result_to_html(seach_topic_list=['Java'], open_html_after_finish=True)
 
 

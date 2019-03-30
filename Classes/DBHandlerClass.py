@@ -103,16 +103,19 @@ class Vacancies(Base):
     search_topic = Column(String)
     platform = Column(ForeignKey('platform.name'))
     company = Column(String)
+    location = Column(String, nullable=True)
     date = Column(Date)
     url = Column(String)
     title = Column(String)
 
-    def __init__(self, platform: str, search_topic: str, date: datetime, url: str, company: str, title: str):
+    def __init__(self, platform: str, search_topic: str, date: datetime, url: str, company: str, location: str,
+                 title: str):
         self.platform = platform
         self.search_topic = search_topic
         self.date = date
         self.url = url
         self.company = company
+        self.location = location
         self.title = title
 
 

@@ -1,13 +1,13 @@
 from Classes.DBHandlerClass import session_scope, Vacancies, Platform
-from config import ROOT_DIR
-
+from Classes.ConfigHandlerClass import ConfigHandler
 from datetime import datetime
 import json
+import os
 
 
 def load_data_scripture(dbms):
-    platform_json_file = ROOT_DIR + "/tests/test_data/platform.json"
-    vacancies_json_file = ROOT_DIR + "/tests/test_data/vacancies.json"
+    platform_json_file = os.path.join(ConfigHandler.ROOT_DIR, "tests/test_data/platform.json")
+    vacancies_json_file = os.path.join(ConfigHandler.ROOT_DIR, "tests/test_data/vacancies.json")
 
     with session_scope(dbms=dbms) as session:
 
@@ -29,5 +29,5 @@ def load_data_scripture(dbms):
                 date = datetime.strptime(row['date'], '%Y-%m-%d')
                 session.add(
                     Vacancies(platform=row['platform'], search_topic=row['search_type'], date=date,
-                              url=row['url'], company=row['company'], title=row['title'])
+                              url=row['url'], company=row['company'], title=row['title'], location=None)
                 )

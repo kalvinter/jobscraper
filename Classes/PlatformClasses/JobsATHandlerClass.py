@@ -7,13 +7,9 @@ from datetime import datetime
 import time
 
 
-class StepStoneHandler(PlatformHandlerBase):
-    platform_name = 'STEPSTONE.AT'
-    base_address = 'https://www.stepstone.at/'
-    header = '---- # (StepStoneHandler)'
-
-    def __init__(self, browser, dbms):
-        super().__init__(browser=browser, dbms=dbms)
+class JobsATHandler(PlatformHandlerBase):
+    platform_name = 'JOBS.AT'
+    base_address = 'https://jobs.at/'
 
     def _get_vacancy_links(self, search_topic: str, search_url: str) -> list:
         """
@@ -31,10 +27,10 @@ class StepStoneHandler(PlatformHandlerBase):
             page += 1
 
             # TODO: Time sleep takes to much time. I wait for an ajax-request to finish which is quicker.
-            #  HOW could I explicitly wait? Waiting for an element does not work ...
+            # HOW could I explicitly wait? Waiting for an element does not work ...
             time.sleep(2)
 
-            elements = self.browser.find_elements_by_css_selector('.job-element-row')
+            elements = self.browser.find_elements_by_css_selector('.m-list-item')
 
             print(f'\n# {page} ------------')
             print(elements)
@@ -44,7 +40,7 @@ class StepStoneHandler(PlatformHandlerBase):
 
             for element in elements:
                 try:
-                    title = element.find_element_by_css_selector('h2').text
+                    title = element.find_element_by_css_selector('.m-list-item-title').text
 
                 except Exception as e:
                     print(f"{self.header}: FATAL: An unexpected error occured!")
@@ -54,12 +50,19 @@ class StepStoneHandler(PlatformHandlerBase):
 
                 if not check:
                     continue
+
                 try:
-                    company = element.find_element_by_css_selector('.job-element__body__company').text
-                    url = element.find_element_by_css_selector('.job-element__url').get_attribute('href')
-                    date_raw = element.find_element_by_css_selector('.date-time-ago').get_attribute('data-date')
-                    date = datetime.strptime(date_raw.split(' ')[0], '%Y-%m-%d')
-                    location = element.find_element_by_css_selector('job-element__body__location').text
+                    try:
+                        company = element.find_element_by_css_selector('.m-job-company > a').text
+
+                    except NoSuchElementException:
+                        company = element.find_element_by_css_selector('.m-job-company').text
+
+                    url = element.find_element_by_css_selector('.m-list-item-title > a').get_attribute('href')
+                    date_raw = element.find_element_by_css_selector('.m-list-sneakPeek').text
+                    date = datetime.strptime(date_raw.split(' ')[0], '%d.%m.%Y')
+
+                    location = element.find_element_by_css_selector('.js-locationLink').text
 
                 except Exception as e:
                     print(f"{self.header}: FATAL: An unexpected error occured!")
@@ -74,20 +77,20 @@ class StepStoneHandler(PlatformHandlerBase):
                     "location": location,
                 })
 
-            for i in vacancy_list:
-                print(i)
-
             # If next button is found and href is not javascript void - click it
             try:
-                next_button = self.browser.find_element_by_css_selector('.at-next')
-                if next_button.get_attribute('href') == "javascript:void(0)":
+                next_button = self.browser.find_element_by_css_selector('.m-pagination-item--last')
+                if 'b--disabled' in next_button.get_attribute('class'):
                     break
-                else:
-                    next_button.click()
+
+                next_button.click()
 
             except NoSuchElementException:
                 print(f"{self.header}: INFO: No button found to press next.")
                 break
+
+        for i in vacancy_list:
+            print(i)
 
         return vacancy_list
 

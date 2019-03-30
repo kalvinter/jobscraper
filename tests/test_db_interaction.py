@@ -9,7 +9,7 @@ from datetime import datetime
 
 class TestDBCreation(unittest.TestCase):
 
-    def test_create_database(self):
+    def test_database_creation(self):
         if os.path.isfile(TEST_DB_PATH):
             os.remove(TEST_DB_PATH)
             self.assertEqual(os.path.isfile(TEST_DB_PATH), False)
@@ -48,6 +48,14 @@ class TestVacancyInteractions(unittest.TestCase):
         cls.platform = Platform(name="test.at", base_address="www.test.at/")
         session.add(cls.platform)
         session.commit()
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        dbms = DBHandler(DBHandler.SQLITE, db_name=TEST_DB_NAME)
+
+        with session_scope(dbms) as session:
+            session.query(Platform).delete()
 
     def tearDown(self):
         with session_scope(self.dbms) as session:
@@ -56,14 +64,16 @@ class TestVacancyInteractions(unittest.TestCase):
     def test_insert_row_in_articles(self):
         with session_scope(self.dbms) as session:
             new_vacancy = Vacancies(platform=self.platform.name, date=datetime(2019, 1, 1), url="http://",
-                                    title="title", company="aha", search_type='Java')
+                                    title="title", company="aha", search_topic='Java', location="Wien")
 
             session.add(new_vacancy)
             session.flush()
 
         with session_scope(self.dbms) as session:
             vacancies_instances_list = session.query(Vacancies).all()
+
             self.assertEqual(len(vacancies_instances_list), 1)
+
             vacancies_instance = vacancies_instances_list[0]
             self.assertEqual([vacancies_instance.id, vacancies_instance.platform],
                              [1, 'test.at'])
@@ -72,9 +82,9 @@ class TestVacancyInteractions(unittest.TestCase):
         with session_scope(self.dbms) as session:
             vacancy_list = [
                 Vacancies(platform=self.platform.name, date=datetime(2019, 1, 2), url="http://",
-                          title="title", company="aha", search_type='Java'),
+                          title="title", company="aha", search_topic='Java', location="Wien"),
                 Vacancies(platform=self.platform.name, date=datetime(2019, 1, 3), url="http://",
-                          title="title", company="aha", search_type='Java')
+                          title="title", company="aha", search_topic='Java', location="Wien")
             ]
 
             for v in vacancy_list:
