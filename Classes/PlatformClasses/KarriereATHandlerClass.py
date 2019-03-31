@@ -1,5 +1,4 @@
 from Classes.PlatformClasses.PlatformHandlerBaseClass import PlatformHandlerBase
-from Classes.ConfigHandlerClass import ConfigHandler
 
 from datetime import datetime
 import time
@@ -10,10 +9,7 @@ class KarriereATHandler(PlatformHandlerBase):
     base_address = 'https://www.karriere.at/'
     header = '---- # (KarriereATHandler)'
 
-    def __init__(self, browser, dbms):
-        super().__init__(browser=browser, dbms=dbms)
-
-    def _get_vacancy_links(self, search_topic: str, search_url: str):
+    def _get_job_postings(self, search_topic: str, search_url: str):
         vacancy_list = []
 
         self.browser.get(search_url)
@@ -53,7 +49,7 @@ class KarriereATHandler(PlatformHandlerBase):
                     url = element.find_element_by_css_selector('.m-jobItem__titleLink').get_attribute('href')
                     date_raw = element.find_element_by_css_selector('.m-jobItem__date').text
                     date = datetime.strptime(date_raw.replace('am ', ''), '%d.%m.%Y')
-                    locaton = element.find_element_by_css_selector('.m-jobItem__locationLink').text
+                    location = element.find_element_by_css_selector('.m-jobItem__locationLink').text
 
                 except Exception as e:
                     print(f"{self.header}: FATAL: An unexpected error occured!")
@@ -65,7 +61,7 @@ class KarriereATHandler(PlatformHandlerBase):
                     "url": url,
                     "title": title,
                     "date": date,
-                    "location": locaton,
+                    "location": location,
                 })
 
             for i in vacancy_list:

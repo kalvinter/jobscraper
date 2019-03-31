@@ -1,5 +1,4 @@
 from Classes.PlatformClasses.PlatformHandlerBaseClass import PlatformHandlerBase
-from Classes.ConfigHandlerClass import ConfigHandler
 
 from selenium.common.exceptions import NoSuchElementException
 
@@ -12,10 +11,7 @@ class StepStoneHandler(PlatformHandlerBase):
     base_address = 'https://www.stepstone.at/'
     header = '---- # (StepStoneHandler)'
 
-    def __init__(self, browser, dbms):
-        super().__init__(browser=browser, dbms=dbms)
-
-    def _get_vacancy_links(self, search_topic: str, search_url: str) -> list:
+    def _get_job_postings(self, search_topic: str, search_url: str) -> list:
         """
         Open the search-url provided through the config-url for the provided search-topic. Read all job posting entries,
         prease next until there are no more results and return the resulting-list.
@@ -43,6 +39,16 @@ class StepStoneHandler(PlatformHandlerBase):
                 break
 
             for element in elements:
+
+                # Check if the job-posting is part of the recommendations
+                try:
+                    article_node = element.find_element_by_css_selector('.job-element_recommended')
+                    # If this element is found, the job posting is part of the recommendations -> skip
+                    continue
+
+                except NoSuchElementException:
+                    pass
+
                 try:
                     title = element.find_element_by_css_selector('h2').text
 
@@ -59,7 +65,7 @@ class StepStoneHandler(PlatformHandlerBase):
                     url = element.find_element_by_css_selector('.job-element__url').get_attribute('href')
                     date_raw = element.find_element_by_css_selector('.date-time-ago').get_attribute('data-date')
                     date = datetime.strptime(date_raw.split(' ')[0], '%Y-%m-%d')
-                    location = element.find_element_by_css_selector('job-element__body__location').text
+                    location = element.find_element_by_css_selector('.job-element__body__location').text
 
                 except Exception as e:
                     print(f"{self.header}: FATAL: An unexpected error occured!")

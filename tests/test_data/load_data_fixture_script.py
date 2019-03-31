@@ -1,5 +1,5 @@
-from Classes.DBHandlerClass import session_scope, Vacancies, Platform
-from Classes.ConfigHandlerClass import ConfigHandler
+from Classes.UtilClasses.DBHandlerClass import session_scope, Vacancies, Platform
+from Classes.UtilClasses.ConfigHandlerClass import ConfigHandler
 from datetime import datetime
 import json
 import os
@@ -29,5 +29,5 @@ def load_data_scripture(dbms):
                 date = datetime.strptime(row['date'], '%Y-%m-%d')
                 session.add(
                     Vacancies(platform=row['platform'], search_topic=row['search_type'], date=date,
-                              url=row['url'], company=row['company'], title=row['title'], location=None)
+                              url=row['url'], company=row['company'], title=row['title'], location="")
                 )

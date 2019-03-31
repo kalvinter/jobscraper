@@ -1,5 +1,4 @@
 from Classes.PlatformClasses.PlatformHandlerBaseClass import PlatformHandlerBase
-from Classes.ConfigHandlerClass import ConfigHandler
 
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
 
@@ -10,13 +9,9 @@ import time
 class MonsterATHandler(PlatformHandlerBase):
     platform_name = 'MONSTER.AT'
     base_address = 'https://www.monster.at/'
+    header = '---- # (MonsterATHandler)'
 
-    def __init__(self, browser, dbms):
-        super().__init__(browser=browser, dbms=dbms)
-        self.header = '---- # (MonsterATHandler)'
-        self.search_adress = 'https://www.monster.at/jobs/suche/Vollzeit_8?cy=at&q=Java&where=Wien'
-
-    def _get_vacancy_links(self, search_topic: str, search_url: str) -> list:
+    def _get_job_postings(self, search_topic: str, search_url: str) -> list:
         """
         Open the search-url provided through the config-url for the provided search-topic. Read all job posting entries,
         prease next until there are no more results and return the resulting-list.

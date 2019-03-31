@@ -1,4 +1,5 @@
 {
+	
 	"DRIVER_EXE_NAME": "chromedriver.exe",
   
 	 "STOPWORDS": [
@@ -17,14 +18,25 @@
 	],
 
 	"PLATFORMS": {
-	
-		"JOBS.AT": {
-			"Java": "https://www.jobs.at/j/java/wien?dateFrom=days&employmentType%5B0%5D=3960"
-		}
-
+		"KARRIERE.AT": {
+			"Django Python": "https://www.karriere.at/jobs/django-python/wien"
+		},
 		
+		"STEPSTONE.AT": {
+			"Django Python": "https://www.stepstone.at/5/ergebnisliste.html?stf=freeText&ns=1&qs=%5B%5D&companyID=0&cityID=0&sourceOfTheSearchField=homepagemex%3Ageneral&searchOrigin=Homepage_top-search&ke=Django&ws=Wien&ra=30"
+		},
+		
+		"MONSTER.AT": {
+			"Django Python": "https://www.monster.at/jobs/suche/?q=Django&where=Wien&cy=at"
+		},
+		
+		"JOBS.AT": {
+			"Django Python": "https://www.jobs.at/j/django/wien"
+		}
+		
+	},
 	
-	}
+	"POSTING_RETENTION_IN_DAYS": 14
 	
 
 }

@@ -1,3 +1,5 @@
+from Classes.UtilClasses.ConfigHandlerClass import ConfigHandler
+
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Date, Integer, String, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
@@ -6,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Instantiate declarative base. Necessary for declaring tables as classes
 Base = declarative_base()
@@ -66,6 +68,18 @@ class DBHandler:
         except Exception as e:
             print("Error occurred during Table creation!")
             print(e)
+
+    def cleanup_job_postings_in_database(self):
+        """Delete all job postings that are older than the configured day-limit"""
+        if ConfigHandler.POSTING_RETENTION_IN_DAYS is None:
+            # If is set to None, auto-deletion is disabled
+            return None
+
+        else:
+            posting_age_limit = datetime.now() - timedelta(days=ConfigHandler.POSTING_RETENTION_IN_DAYS)
+
+            with session_scope(self) as session:
+                session.query(Vacancies).filter(Vacancies.date < posting_age_limit).delete()
 
     def get_tables_in_database(self):
         table_query = "SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%';"

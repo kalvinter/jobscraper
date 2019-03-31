@@ -1,5 +1,4 @@
 from Classes.PlatformClasses.PlatformHandlerBaseClass import PlatformHandlerBase
-from Classes.ConfigHandlerClass import ConfigHandler
 
 from selenium.common.exceptions import NoSuchElementException
 
@@ -11,7 +10,7 @@ class JobsATHandler(PlatformHandlerBase):
     platform_name = 'JOBS.AT'
     base_address = 'https://jobs.at/'
 
-    def _get_vacancy_links(self, search_topic: str, search_url: str) -> list:
+    def _get_job_postings(self, search_topic: str, search_url: str) -> list:
         """
         Open the search-url provided through the config-url for the provided search-topic. Read all job posting entries,
         prease next until there are no more results and return the resulting-list.
@@ -58,7 +57,13 @@ class JobsATHandler(PlatformHandlerBase):
                     except NoSuchElementException:
                         company = element.find_element_by_css_selector('.m-job-company').text
 
-                    url = element.find_element_by_css_selector('.m-list-item-title > a').get_attribute('href')
+                    try:
+                        url = element.find_element_by_css_selector('.m-list-item-title > a').get_attribute('href')
+
+                    except NoSuchElementException:
+                        # If no link is found, the vacancy is already filled
+                        continue
+
                     date_raw = element.find_element_by_css_selector('.m-list-sneakPeek').text
                     date = datetime.strptime(date_raw.split(' ')[0], '%d.%m.%Y')
 

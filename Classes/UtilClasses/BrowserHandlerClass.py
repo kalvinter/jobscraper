@@ -1,5 +1,5 @@
 from selenium import webdriver
-from Classes.ConfigHandlerClass import ConfigHandler
+from Classes.UtilClasses.ConfigHandlerClass import ConfigHandler
 
 
 class BrowserHandler:
@@ -16,3 +16,7 @@ class BrowserHandler:
         self.driver = webdriver.Chrome(ConfigHandler.DRIVER_PATH)
 
         return self.driver
+
+    def close_browser(self):
+        self.driver.close()
+        self.driver = None
