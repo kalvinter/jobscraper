@@ -3,8 +3,7 @@
 
 WebScraper for job-posting websites. Get a quick overview over all potentiall interesting job-postings across multiple platforms.
 
-The repository is easily extendable and intended as a hobby project to play with selenium and make looking for 
-a job more fun ;)
+The repository can easily be extended by new job-posting-websites. It is intended as a hobby project to play with selenium and make looking for a job more fun ;)
 
 Currently four major Austrian job-posting-websites are implemented:
 - karriere.at
@@ -24,16 +23,15 @@ Currently four major Austrian job-posting-websites are implemented:
 
 - **Python 3.6+**
 
-- **Download the required webdriver-exe-File for your browser.** The project requires a matching webdriver.exe-file. The project is currently tested for Chrome Version 73. 
-If you use Google Chrome, look up your Chrome-Browser's version by clicking on 'help' in a Chrome-Window. Then click 
-on 'about Google Chrome'. There you should see your browser's version. After that download the matching 
-webdriver.exe-File from the [official source from Google](http://chromedriver.chromium.org/downloads). 
-Copy the webdriver-file in the project's root directory (where main.py-file is located). Lastly, compare the file
-name to the name provided in the config.json-File under the key "DRIVER_EXE_NAME". If your driver-file is named 
-differently update the file-name in config.json so that it matches the name of your exe-file.
+- **Download the required webdriver-file for your browser.**
+  - **Google Chrome**: Tested for Chrome version 73. Download the chromedriver-file matching to your Chrome version from the [official Google source](http://chromedriver.chromium.org/downloads).  
+  - **Firefox**: Tested for version 66 and geckodriver version 0.24.0. Download the latest geckodriver release from [the geckodriver github-page](https://github.com/mozilla/geckodriver/releases).
+- **Copy the webdriver-file in the folder "webdriver"**. Don't change the webdriver-file's name!
+- **Update the webdriver name in config.json**: Update the value for the key "DRIVER_EXE_NAME" in config.json to match 
+your downloaded webdriver's name.
 
 ```
-	"DRIVER_EXE_NAME": "mydriver.exe",
+	"DRIVER_EXE_NAME": "chromedriver.exe",
 ```
 
 ### Installation
@@ -69,35 +67,34 @@ py main.py
 All options to customize the scraping can be changed in the **config.json**-File. 
 The file is located in the repository's root directory. There are four main config-options. 
 
-1) **DRIVER_EXE_NAME**: Please specify the file-name of your webdriver.exe-File. The script will look for this file-name in the repository's root directory.
+1) **DRIVER_EXE_NAME**: The file-name of your webdriver.exe-file. The script will look for this file-name in the folder "webdriver".
 2) **STOPWORDS**: If a job posting's title contains one of the stopwords defined here, the job posting will be skipped.
 3) **PLATFORMS**: For each of the implemented job-posting-website, add a search-url with a recognizable search-topic-name.
 4) **POSTING_RETENTION_IN_DAYS**: Specify the retention time of job postings in days. Any posting older than this value will be deleted.
  
 
 ### How can I define my own search-queries (Config-Option: PLATFORMS)?
-For each of the implemented job-posting-websites you can define a search-topic and search-url.
+For each of the implemented job-posting-websites you can define a search-topic and search-url in config.json.
 The search-topic is just a name that will be associated with the scraped results.
 
 In config.json-File you can simply add your own search-query by adding a new key-value-pair to the 
 job-posting-platform of your choice.
 
-Example: If you want to scrape all job-postings on karriere.at, open the website in your browser, select all the 
-filter options to your liking (Full-time, beginner, advanced etc.) and copy the URL. Next create
-a new key-value-entry inside of the "KARRIERE.AT"-Key. The new key is your search topic (here it is "New Topic") 
-and the value is the URL you have just copied. 
+- *Example: If you want to scrape all job-postings on karriere.at, open the website in your browser, select 
+filter options and copy the URL. Next, create a new key-value-entry inside of the "KARRIERE.AT"-Key. The new key is 
+your search topic (here it is "New Topic") and the value is the URL from your browser.* 
 
 ```
 "PLATFORMS": {
 		"KARRIERE.AT": {
 			"Django Python": "https://www.karriere.at/jobs/django-python/wien",
-			"New Topic": "https://www.karriere.at/jobs/some-keyword/wien"
+			"New Topic": "https://www.karriere.at/jobs/new-keyword/wien"
 		},		
 	}
 ```
 
 ### How can I define my own stopwords?
-Simply add your own stopwords as string in config.json.
+Simply add your own stopwords as string to the list with the key "STOPWORDS" in config.json.
 ```
 	 "STOPWORDS": [
 		"new_stopword_1",
