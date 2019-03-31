@@ -1,16 +1,16 @@
 # JobScraper
 [![codecov](https://codecov.io/gh/kalvinter/jobscraper/branch/master/graph/badge.svg?token=dIrpvpdPVr)](https://codecov.io/gh/kalvinter/jobscraper)
 
-WebScraper for job-posting websites. Automate finding interesting job postings. Spend less time looking for job postings and focus on writing your applications.
+WebScraper for job-posting websites. Get a quick overview over all potentiall interesting job-postings across multiple platforms.
+
+The repository is easily extendable and intended as a hobby project to play with selenium and make looking for 
+a job more fun ;)
 
 Currently four major Austrian job-posting-websites are implemented:
 - karriere.at
 - stepstone.at
 - monster.at
 - jobs.at
-
-The repository is easily extendable and intended as a hobby project to play with selenium and make looking for 
-a job more fun ;)  
 
 ## Features
 
