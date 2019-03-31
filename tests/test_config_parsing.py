@@ -33,6 +33,13 @@ class TestConfigJSONParsing(unittest.TestCase):
         except:
             pass
 
+    def tearDown(self):
+        # Reset ConfigHandler after each test
+        ConfigHandler.STOPWORDS = []
+        ConfigHandler.POSTING_RETENTION_IN_DAYS = 30
+        ConfigHandler.search_types_and_urls = {}
+        ConfigHandler.search_topics = set([])
+
     def test_successfull_parsing(self):
         """Test if a valid JSON is successfully parsed and config-variables set"""
         ConfigHandler.CONFIG_PATH = os.path.join(ConfigHandler.ROOT_DIR, 'tests', 'test_data',
@@ -133,6 +140,7 @@ class TestConfigJSONParsing(unittest.TestCase):
             error = True
 
         self.assertTrue(error)
+        self.assertEqual(ConfigHandler.STOPWORDS, [])
 
     def test_invalid_platform_defined(self):
         """ Test if an error is thrown, when a platform is entered in config.json which has not been registered in

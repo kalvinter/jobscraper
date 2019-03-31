@@ -34,15 +34,6 @@ class PlatformHandlerBase(ABC):
     def _save_vacancy_entries_to_database(self, vacancy_entries: list, search_topic: str) -> bool:
         with session_scope(self.dbms) as session:
             try:
-                # Delete existing entries
-                session.query(Vacancies)\
-                    .filter(Vacancies.platform == self.platform_name, Vacancies.search_topic == search_topic).delete()
-
-            except Exception as e:
-                print(f"{self.header}: ERROR: Could not delete old entries! Msg.: {str(e)}")
-                raise
-
-            try:
                 for entry in vacancy_entries:
                     # Check if the entry already exists in the database
                     exists_check = session.query(Vacancies.id).filter(
