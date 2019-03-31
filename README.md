@@ -1,4 +1,4 @@
-# jobscraper
+# JobScraper
 [![codecov](https://codecov.io/gh/kalvinter/jobscraper/branch/master/graph/badge.svg?token=dIrpvpdPVr)](https://codecov.io/gh/kalvinter/jobscraper)
 
 WebScraper for job-posting websites. Automate finding interesting job postings. Spend less time looking for job postings and focus on writing your applications.
