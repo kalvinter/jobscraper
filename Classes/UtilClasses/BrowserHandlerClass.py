@@ -13,7 +13,14 @@ class BrowserHandler:
         :return: web-driver-instance
         """
         # Place any driver-options, plugin-imports or other changes to the browser instance here
-        self.driver = webdriver.Chrome(ConfigHandler.DRIVER_PATH)
+        if ConfigHandler.DRIVER_TYPE.lower() == 'chrome':
+            self.driver = webdriver.Chrome(ConfigHandler.DRIVER_PATH)
+
+        elif ConfigHandler.DRIVER_TYPE.lower() == 'firefox':
+            self.driver = webdriver.Firefox()
+
+        else:
+            raise ValueError("DRIVER_TYPE incorrectly set.")
 
         return self.driver
 

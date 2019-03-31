@@ -39,6 +39,7 @@ class TestConfigJSONParsing(unittest.TestCase):
         ConfigHandler.POSTING_RETENTION_IN_DAYS = 30
         ConfigHandler.search_types_and_urls = {}
         ConfigHandler.search_topics = set([])
+        ConfigHandler.DRIVER_TYPE = 'chrome'
 
     def test_successfull_parsing(self):
         """Test if a valid JSON is successfully parsed and config-variables set"""
@@ -46,6 +47,22 @@ class TestConfigJSONParsing(unittest.TestCase):
                                                  'config_jsons', 'config_success.json')
         ConfigHandler.validate_config_file_base_variables()
         ConfigHandler.validate_search_topics(platform_registry=self.platform_registry)
+
+    def test_correctly_recognised_chromedriver(self):
+        ConfigHandler.CONFIG_PATH = os.path.join(ConfigHandler.ROOT_DIR, 'tests', 'test_data',
+                                                 'config_jsons', 'config_success.json')
+        ConfigHandler.validate_config_file_base_variables()
+        ConfigHandler.validate_search_topics(platform_registry=self.platform_registry)
+
+        self.assertEqual(ConfigHandler.DRIVER_TYPE, 'chrome')
+
+    def test_correctly_recognised_geckodriver(self):
+        ConfigHandler.CONFIG_PATH = os.path.join(ConfigHandler.ROOT_DIR, 'tests', 'test_data',
+                                                 'config_jsons', 'config_geckodriver.json')
+        ConfigHandler.validate_config_file_base_variables()
+        ConfigHandler.validate_search_topics(platform_registry=self.platform_registry)
+
+        self.assertEqual(ConfigHandler.DRIVER_TYPE, 'firefox')
 
     def test_no_retention_in_days_value(self):
         """Test if a missing "retention_in_days"-value causes the default value to be used"""

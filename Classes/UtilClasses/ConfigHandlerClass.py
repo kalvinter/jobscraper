@@ -10,7 +10,8 @@ class ConfigHandler:
     """
     ROOT_DIR = Path(__file__).parent.parent.parent
     CONFIG_PATH = os.path.join(ROOT_DIR, 'config.json')
-    DRIVER_PATH = os.path.join(ROOT_DIR, "chromedriver.exe")
+    DRIVER_PATH = os.path.join(ROOT_DIR, 'webdriver', "chromedriver.exe")
+    DRIVER_TYPE = "chrome"
 
     POSTING_RETENTION_IN_DAYS = 30
 
@@ -41,16 +42,28 @@ class ConfigHandler:
                 raise ValueError(msg)
 
         try:
-            cls.DRIVER_PATH = os.path.join(cls.ROOT_DIR, config_json['DRIVER_EXE_NAME'])
+            cls.DRIVER_PATH = os.path.join(cls.ROOT_DIR, 'webdriver', config_json['DRIVER_EXE_NAME'])
+
         except KeyError:
             raise ValueError(f'{cls.header}: ERROR: Could not find "DRIVER_EXE_NAME" in config.json! Please add'
                              f'the name of the webdriver-exe-File to config.json. '
                              f'Example: "DRIVER_EXE_NAME": "webdriver.exe"')
 
+        driver_name = config_json['DRIVER_EXE_NAME'].lower()
+
+        if 'chrome' in driver_name:
+            ConfigHandler.DRIVER_TYPE = 'chrome'
+        elif 'gecko' in driver_name:
+            ConfigHandler.DRIVER_TYPE = 'firefox'
+        else:
+            raise ValueError(f'{cls.header}: Could not recognize the webdriver-type. If you use Chrome, please make '
+                             f'sure that the word chrome is contained in the webdriver name. If you use Firefox'
+                             f'please make sure, that the word "gecko" is contained in the webdriver name.')
+
         if not os.path.isfile(cls.DRIVER_PATH):
             raise ValueError(f"{cls.header}: ERROR: Could not locate webdriver-file. Please check if the necessary "
                              f"webdriver.exe-File exists, that the name is correctly defined in config.json and that "
-                             f"it is located in the programmes root-directory {cls.ROOT_DIR}.")
+                             f"it is located in the webdriver-folder {cls.ROOT_DIR}.")
 
         try:
             cls.STOPWORDS = config_json['STOPWORDS']

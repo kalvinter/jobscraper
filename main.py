@@ -67,6 +67,9 @@ def main():
     # Validate Search-Topics and URLs in config-file comparing it to the registered platforms
     ConfigHandler.validate_search_topics(platform_registry=platform_registry)
 
+    # Clean up database and remove job-postings that are older than the retention-range
+    dbms.cleanup_job_postings_in_database()
+
     # If 'no-refetch' is not set, Fetch all current job postings
     if not args.no_refetch:
 
