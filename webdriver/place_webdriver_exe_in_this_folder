@@ -1,0 +1,9 @@
+You need to download the required webdriver-file for your browser
+  - Google Chrome: Tested for Chrome version 73. Download the chromedriver-file matching to your Chrome version from the [official Google source](http://chromedriver.chromium.org/downloads).
+  - Firefox: Tested for version 66 and geckodriver version 0.24.0. Download the latest geckodriver release from [the geckodriver github-page](https://github.com/mozilla/geckodriver/releases).
+
+After downloading the webdriver-file, place it in this folder.
+
+Don't change the webdriver-file's name!
+
+If necessary, update the value for the key "DRIVER_EXE_NAME" in config.json to match your downloaded webdriver's name.

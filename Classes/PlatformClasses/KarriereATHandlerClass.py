@@ -47,8 +47,10 @@ class KarriereATHandler(PlatformHandlerBase):
                 try:
                     company = element.find_element_by_css_selector('.m-jobItem__company').text
                     url = element.find_element_by_css_selector('.m-jobItem__titleLink').get_attribute('href')
-                    date_raw = element.find_element_by_css_selector('.m-jobItem__date').text
-                    date = datetime.strptime(date_raw.replace('am ', ''), '%d.%m.%Y')
+
+                    date_string = element.find_element_by_css_selector('.m-jobItem__date').text
+                    date = self._parse_date(date_string=date_string)
+
                     location = element.find_element_by_css_selector('.m-jobItem__locationLink').text
 
                 except Exception as e:

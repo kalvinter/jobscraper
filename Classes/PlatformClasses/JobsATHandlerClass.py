@@ -64,8 +64,10 @@ class JobsATHandler(PlatformHandlerBase):
                         # If no link is found, the vacancy is already filled
                         continue
 
-                    date_raw = element.find_element_by_css_selector('.m-list-sneakPeek').text
-                    date = datetime.strptime(date_raw.split(' ')[0], '%d.%m.%Y')
+                    date_string = element.find_element_by_css_selector('.m-list-sneakPeek').text
+
+                    # Current format found on Jobs.at -> "05.04.2019 | Vollzeit"
+                    date = self._parse_date(date_string=date_string.split(' ')[0])
 
                     location = element.find_element_by_css_selector('.js-locationLink').text
 

@@ -63,8 +63,10 @@ class StepStoneHandler(PlatformHandlerBase):
                 try:
                     company = element.find_element_by_css_selector('.job-element__body__company').text
                     url = element.find_element_by_css_selector('.job-element__url').get_attribute('href')
-                    date_raw = element.find_element_by_css_selector('.date-time-ago').get_attribute('data-date')
-                    date = datetime.strptime(date_raw.split(' ')[0], '%Y-%m-%d')
+
+                    date_string = element.find_element_by_css_selector('.date-time-ago').get_attribute('data-date')
+                    date = self._parse_date(date_string=date_string)
+
                     location = element.find_element_by_css_selector('.job-element__body__location').text
 
                 except Exception as e:

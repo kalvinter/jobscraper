@@ -78,8 +78,10 @@ class MonsterATHandler(PlatformHandlerBase):
             try:
                 company = element.find_element_by_css_selector('.company').text
                 url = element.find_element_by_css_selector('a').get_attribute('href')
-                date_raw = element.find_element_by_css_selector('time').get_attribute('datetime')
-                date = datetime.strptime(date_raw.split('T')[0], '%Y-%m-%d')
+
+                date_string = element.find_element_by_css_selector('time').get_attribute('datetime')
+                date = self._parse_date(date_string=date_string)
+
                 location = element.find_element_by_css_selector('.location').text
 
             except Exception as e:

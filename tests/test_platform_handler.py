@@ -57,6 +57,34 @@ class TestPlatformHandlerBaseClassMethods(unittest.TestCase):
         with session_scope(self.dbms) as session:
             session.query(Vacancies).delete()
 
+    def test_parse_dates_successful(self):
+        date_testing_dict = {
+            "2019-04-01": "2019-04-01",
+            "01.04.2019": "2019-04-01",
+            "2017-05-26T12:00": "2017-05-26",
+            " 05.04.2019  | Vollzeit   ": "2019-04-05",
+            "am 01.04.2019": '2019-04-01',
+        }
+
+        try:
+            for raw_date, final_date in date_testing_dict.items():
+                date = self.karriere_at_handler._parse_date(date_string=raw_date)
+                self.assertEqual(str(date), final_date)
+
+        except ValueError as e:
+            raise
+
+    def test_parse_dates_failure(self):
+        error = False
+
+        try:
+            date = self.karriere_at_handler._parse_date(date_string="2019-Hello")
+
+        except ValueError:
+            error = True
+
+        self.assertEqual(error, True)
+
     def test_title_filter_by_stopword_positive(self):
         """Test if, a title without one of the specified stopwords is correctly flagged as ok"""
         ConfigHandler.STOPWORDS = ["expert", "senior"]

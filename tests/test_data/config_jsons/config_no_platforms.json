@@ -1,0 +1,19 @@
+{
+	"DRIVER_EXE_NAME": "chromedriver.exe",
+  
+	 "STOPWORDS": [
+		"consultant",
+		"senior",
+		"praktikant",
+		"internship",
+		"werkstudent",
+		"lead",
+		" sap ",
+		"praktikant",
+		"praktikum",
+		" php ",
+		"studentenjob"
+	],
+	
+
+}

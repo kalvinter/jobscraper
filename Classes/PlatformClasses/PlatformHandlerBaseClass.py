@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from Classes.UtilClasses.ConfigHandlerClass import ConfigHandler
 from Classes.UtilClasses.DBHandlerClass import session_scope, Vacancies
 
-from sqlalchemy.sql import exists
+from datetime import datetime
+import re
 
 
 class PlatformHandlerBase(ABC):
@@ -43,7 +44,6 @@ class PlatformHandlerBase(ABC):
                         Vacancies.location == entry['location']
                     ).scalar() is not None
 
-                    print(exists_check)
                     # If it does not exist, add it
                     if not exists_check:
                         new_vacancy = Vacancies(platform=entry['platform'], company=entry['company'], url=entry['url'],
@@ -56,3 +56,36 @@ class PlatformHandlerBase(ABC):
                 raise
 
         return True
+
+    def _parse_date(self, date_string):
+        if 'T' in date_string:
+            date_string = date_string.split('T')[0]
+
+        # If not only numbers are found in the date-string
+        elif re.match(r'([^\d.-]+)', date_string):
+            date_string = re.sub(r'([^\d.-]+)', '', date_string)
+
+        date_patterns = [
+            '%Y-%m-%d',
+            '%Y-%m-%d ',
+            '%Y-%m-%dT',
+            '%d.%m.%Y',
+        ]
+
+        date = None
+
+        for pattern in date_patterns:
+            try:
+                date = datetime.strptime(date_string, pattern).date()
+                break
+
+            except ValueError:
+                continue
+
+        if date is None:
+            raise ValueError(f"{self.header}: ERROR: Could not parse datetime found on the platform "
+                             f"{self.platform_name}. Please contact the developer to fix it "
+                             f"or if you are a python developer "
+                             f"yourself, adapt the function '_parse_date()'.")
+
+        return date

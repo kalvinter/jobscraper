@@ -73,7 +73,7 @@ The file is located in the repository's root directory. There are four main conf
 4) **POSTING_RETENTION_IN_DAYS**: Specify the retention time of job postings in days. Any posting older than this value will be deleted.
  
 
-### How can I define my own search-queries (Config-Option: PLATFORMS)?
+### How can I define my own search-queries?
 For each of the implemented job-posting-websites you can define a search-topic and search-url in config.json.
 The search-topic is just a name that will be associated with the scraped results.
 
