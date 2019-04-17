@@ -21,11 +21,21 @@ class MonsterATHandler(PlatformHandlerBase):
 
         self.browser.get(search_url)
 
-        page = 0
+        # Check if the search result is empty. If yes - return empty list
+        try:
+            page_header = self.browser.find_element_by_css_selector('.title > .pivot').text
+
+            if 'keine' in page_header.lower():
+                return vacancy_list
+
+        except Exception as e:
+            print(f"{self.header}: FATAL: An unexpected error occured. Could not scrape platform "
+                  f"{self.platform_name}! Error Msg: {str(e)}")
+            self.scrape_status[search_topic] = False
+            return []
 
         # In desktop view, find the button and press it
         while True:
-            page += 1
 
             # If next button is found and href is not javascript void - click it
             try:
@@ -51,31 +61,26 @@ class MonsterATHandler(PlatformHandlerBase):
             if new_height == last_height:
                 break
             last_height = new_height
+
         # TODO: Time sleep takes to much time. I wait for an ajax-request to finish which is quicker.
         #  HOW could I explicitly wait? Waiting for an element does not work ...
         time.sleep(2)
 
+        # Start scraping the results
         results_container = self.browser.find_element_by_css_selector('#ResultsScrollable')
 
         elements = results_container.find_elements_by_css_selector('.flex-row')
-
-        print(f'\n# {page} ------------')
-        print(elements)
 
         for element in elements:
             try:
                 title = element.find_element_by_css_selector('a').text
 
-            except Exception as e:
-                print(f"{self.header}: FATAL: An unexpected error occured!")
-                raise Exception(str(e))
+                check = self._apply_title_filter(title)
 
-            check = self.apply_title_filter(title)
+                if not check:
+                    # If a stopword is found in the title -> skip the entry
+                    continue
 
-            if not check:
-                continue
-
-            try:
                 company = element.find_element_by_css_selector('.company').text
                 url = element.find_element_by_css_selector('a').get_attribute('href')
 
@@ -85,8 +90,10 @@ class MonsterATHandler(PlatformHandlerBase):
                 location = element.find_element_by_css_selector('.location').text
 
             except Exception as e:
-                print(f"{self.header}: FATAL: An unexpected error occured!")
-                raise Exception(str(e))
+                print(f"{self.header}: FATAL: An unexpected error occured. Could not scrape platform "
+                      f"{self.platform_name}! Error Msg: {str(e)}")
+                self.scrape_status[search_topic] = False
+                return []
 
             vacancy_list.append({
                 "platform": self.platform_name,
@@ -97,8 +104,9 @@ class MonsterATHandler(PlatformHandlerBase):
                 "location": location,
             })
 
-        for i in vacancy_list:
-            print(i)
+        if self.verbose:
+            for i in vacancy_list:
+                print(i)
 
         return vacancy_list
 

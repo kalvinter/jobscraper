@@ -1,6 +1,7 @@
 from Classes.UtilClasses.BrowserHandlerClass import BrowserHandler
 from Classes.DisplayClasses.ResultPrinterClass import ResultPrinter
 from Classes.UtilClasses.DBHandlerClass import DBHandler
+from Classes.UtilClasses.PlatformRegistryClass import PlatformRegistry
 
 from tests.unittest_config import TEST_DB_NAME
 from tests.test_data.load_data_fixture_script import load_data_scripture
@@ -17,12 +18,17 @@ class TestPrintDisplayHTMLResult(unittest.TestCase):
 
         cls.browser_handler = BrowserHandler()
         cls.browser = cls.browser_handler.get_browser()
-
-        cls.result_handler = ResultPrinter(dbms=cls.dbms)
+        cls.platform_registry = PlatformRegistry(browser=cls.browser, dbms=cls.dbms)
+        cls.result_handler = ResultPrinter(dbms=cls.dbms, platform_registry=cls.platform_registry)
 
         # Load data fixture
-        load_data_scripture(dbms=cls.dbms)
+        load_data_scripture(dbms=cls.dbms, platform_registry=cls.platform_registry)
         super().setUpClass()
+
+        # Manually set scrape-status for all platforms loaded from data fixture
+        for platform in cls.platform_registry.registered_platforms:
+            platform_instance = cls.platform_registry.get_platform_instance(platform)
+            platform_instance.scrape_status['Java'] = True
 
     @classmethod
     def tearDownClass(cls):

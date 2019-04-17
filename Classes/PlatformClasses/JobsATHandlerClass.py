@@ -9,6 +9,7 @@ import time
 class JobsATHandler(PlatformHandlerBase):
     platform_name = 'JOBS.AT'
     base_address = 'https://jobs.at/'
+    header = '---- # (JobsATHandler)'
 
     def _get_job_postings(self, search_topic: str, search_url: str) -> list:
         """
@@ -26,13 +27,14 @@ class JobsATHandler(PlatformHandlerBase):
             page += 1
 
             # TODO: Time sleep takes to much time. I wait for an ajax-request to finish which is quicker.
-            # HOW could I explicitly wait? Waiting for an element does not work ...
+            #  HOW could I explicitly wait? Waiting for an element does not work ...
             time.sleep(2)
 
             elements = self.browser.find_elements_by_css_selector('.m-list-item')
 
-            print(f'\n# {page} ------------')
-            print(elements)
+            if self.verbose:
+                print(f'\n# {page} ------------')
+                print(elements)
 
             if not elements:
                 break
@@ -41,16 +43,12 @@ class JobsATHandler(PlatformHandlerBase):
                 try:
                     title = element.find_element_by_css_selector('.m-list-item-title').text
 
-                except Exception as e:
-                    print(f"{self.header}: FATAL: An unexpected error occured!")
-                    raise Exception(str(e))
+                    check = self._apply_title_filter(title)
 
-                check = self.apply_title_filter(title)
+                    if not check:
+                        # If a stopword is found in the title -> skip the entry
+                        continue
 
-                if not check:
-                    continue
-
-                try:
                     try:
                         company = element.find_element_by_css_selector('.m-job-company > a').text
 
@@ -72,8 +70,10 @@ class JobsATHandler(PlatformHandlerBase):
                     location = element.find_element_by_css_selector('.js-locationLink').text
 
                 except Exception as e:
-                    print(f"{self.header}: FATAL: An unexpected error occured!")
-                    raise Exception(str(e))
+                    print(f"{self.header}: FATAL: An unexpected error occured. Could not scrape platform "
+                          f"{self.platform_name}! Error Msg: {str(e)}")
+                    self.scrape_status[search_topic] = False
+                    return []
 
                 vacancy_list.append({
                     "platform": self.platform_name,
@@ -96,8 +96,9 @@ class JobsATHandler(PlatformHandlerBase):
                 print(f"{self.header}: INFO: No button found to press next.")
                 break
 
-        for i in vacancy_list:
-            print(i)
+        if self.verbose:
+            for i in vacancy_list:
+                print(i)
 
         return vacancy_list
 

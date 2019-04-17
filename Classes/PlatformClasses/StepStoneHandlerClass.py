@@ -32,8 +32,9 @@ class StepStoneHandler(PlatformHandlerBase):
 
             elements = self.browser.find_elements_by_css_selector('.job-element-row')
 
-            print(f'\n# {page} ------------')
-            print(elements)
+            if self.verbose:
+                print(f'\n# {page} ------------')
+                print(elements)
 
             if not elements:
                 break
@@ -52,15 +53,12 @@ class StepStoneHandler(PlatformHandlerBase):
                 try:
                     title = element.find_element_by_css_selector('h2').text
 
-                except Exception as e:
-                    print(f"{self.header}: FATAL: An unexpected error occured!")
-                    raise Exception(str(e))
+                    check = self._apply_title_filter(title)
 
-                check = self.apply_title_filter(title)
+                    if not check:
+                        # If a stopword is found in the title -> skip the entry
+                        continue
 
-                if not check:
-                    continue
-                try:
                     company = element.find_element_by_css_selector('.job-element__body__company').text
                     url = element.find_element_by_css_selector('.job-element__url').get_attribute('href')
 
@@ -70,8 +68,10 @@ class StepStoneHandler(PlatformHandlerBase):
                     location = element.find_element_by_css_selector('.job-element__body__location').text
 
                 except Exception as e:
-                    print(f"{self.header}: FATAL: An unexpected error occured!")
-                    raise Exception(str(e))
+                    print(f"{self.header}: FATAL: An unexpected error occured. Could not scrape platform "
+                          f"{self.platform_name}! Error Msg: {str(e)}")
+                    self.scrape_status[search_topic] = False
+                    return []
 
                 vacancy_list.append({
                     "platform": self.platform_name,
@@ -82,8 +82,9 @@ class StepStoneHandler(PlatformHandlerBase):
                     "location": location,
                 })
 
-            for i in vacancy_list:
-                print(i)
+            if self.verbose:
+                for i in vacancy_list:
+                    print(i)
 
             # If next button is found and href is not javascript void - click it
             try:
@@ -93,8 +94,11 @@ class StepStoneHandler(PlatformHandlerBase):
                 else:
                     next_button.click()
 
-            except NoSuchElementException:
-                print(f"{self.header}: INFO: No button found to press next.")
+            except NoSuchElementException as e:
+                # If it is not clickable, no more entries can be loaded -> break
+                print(f"{self.header}: INFO: (Page: {page}) No button found to press next.")
+                if self.verbose:
+                    print(str(e))
                 break
 
         return vacancy_list

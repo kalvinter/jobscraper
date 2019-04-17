@@ -1,5 +1,6 @@
 from Classes.UtilClasses.DBHandlerClass import session_scope, Platform
 from Classes.UtilClasses.DBHandlerClass import DBHandler
+from Classes.UtilClasses.ConfigHandlerClass import ConfigHandler
 
 
 class Singleton(type):
@@ -19,7 +20,7 @@ class Singleton(type):
 
 class PlatformRegistry(metaclass=Singleton):
     __instance = None
-    header = '---- #'
+    header = '---- # (PlatformRegistry)'
     dbms = None
     registered_platforms = {}
 
@@ -29,7 +30,7 @@ class PlatformRegistry(metaclass=Singleton):
 
     def register_new_platform(self, platform_scraper_class):
         self.registered_platforms[platform_scraper_class.platform_name] = \
-            platform_scraper_class(browser=self.browser, dbms=self.dbms)
+            platform_scraper_class(browser=self.browser, dbms=self.dbms, verbose=ConfigHandler.VERBOSE_SETTING)
 
     def get_platform_instance(self, platform_name):
         try:
@@ -66,4 +67,4 @@ class PlatformRegistry(metaclass=Singleton):
 
             session.commit()
 
-        print(f"{self.header}: Platform-Table successfully populated.")
+        print(f"{self.header}: Platform-Table successfully populated in database.")

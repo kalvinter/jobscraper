@@ -6,7 +6,7 @@ WebScraper for job-posting websites. Get a quick overview over all potentiall in
 The repository can easily be extended by new job-posting-websites. It is intended as a hobby project to play with selenium and make looking for a job more fun ;)
 
 Currently four major Austrian job-posting-websites are implemented:
-- karriere.at
+- karriere.at (current and newest website version)
 - stepstone.at
 - monster.at
 - jobs.at

@@ -17,10 +17,12 @@ class BrowserHandler:
             self.driver = webdriver.Chrome(ConfigHandler.DRIVER_PATH)
 
         elif ConfigHandler.DRIVER_TYPE.lower() == 'firefox':
-            self.driver = webdriver.Firefox()
+            self.driver = webdriver.Firefox(executable_path=ConfigHandler.DRIVER_PATH)
 
         else:
             raise ValueError("DRIVER_TYPE incorrectly set.")
+
+        self.driver.maximize_window()
 
         return self.driver
 

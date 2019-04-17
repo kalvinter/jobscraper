@@ -1,6 +1,6 @@
 {
 	
-	"DRIVER_EXE_NAME": "chromedriver.exe",
+	"DRIVER_EXE_NAME": "geckodriver.exe",
   
 	 "STOPWORDS": [
 		"consultant",
@@ -19,17 +19,17 @@
 
 	"PLATFORMS": {
 		"KARRIERE.AT": {
-			"Django Python": "https://www.karriere.at/jobs/django-python/wien"
+			"Django Python": "https://www.karriere.at/jobs/java/wien-und-umgebung-region?employmentTypes%5B%5D=3960&jobLevels%5B%5D=3954&states%5B%5D=2430"
 		},
-		
+
 		"STEPSTONE.AT": {
 			"Django Python": "https://www.stepstone.at/5/ergebnisliste.html?stf=freeText&ns=1&qs=%5B%5D&companyID=0&cityID=0&sourceOfTheSearchField=homepagemex%3Ageneral&searchOrigin=Homepage_top-search&ke=Django&ws=Wien&ra=30"
 		},
-		
+
 		"MONSTER.AT": {
-			"Django Python": "https://www.monster.at/jobs/suche/?q=Django&where=Wien&cy=at"
+			"Django Python": "https://www.monster.at/jobs/suche/?q=java&where=Wien&cy=at"
 		},
-		
+
 		"JOBS.AT": {
 			"Django Python": "https://www.jobs.at/j/django/wien"
 		}

@@ -25,6 +25,8 @@ class ConfigHandler:
 
     header = f"---- # (ConfigHandler)"
 
+    VERBOSE_SETTING = False
+
     @classmethod
     def validate_config_file_base_variables(cls):
         """
@@ -147,3 +149,7 @@ class ConfigHandler:
                             cls.search_topics.add(search_topic)
 
         print(f"{cls.header}: Search-Topic and Platform-Variables successfully parsed.")
+
+    @classmethod
+    def set_verbosity_level(cls, verbose: bool = False):
+        cls.VERBOSE_SETTING = verbose

@@ -31,17 +31,21 @@ The project's core-code can be found in the Classes-directory. It consists of th
 
 def main():
     # Initialize CL-Parser
-    parser = argparse.ArgumentParser(description='A')
+    parser = argparse.ArgumentParser()
     parser.add_argument('--no-refetch',  action='store_true',
                         help='Vacancies are not refetched. Operations are run against existing entries '
                              'in the database')
     parser.add_argument('--platforms', action='store_true',
                         help='Prints all available platforms for scraping. Each platform can be added in the '
                              'config.json-File for scraping.')
-    args = parser.parse_args()
+    parser.add_argument('-v', action='store_true',
+                        help='Verbose-mode. Prints all generated messages. Used for debugging.')
 
+    args = parser.parse_args()
+    print(args)
     # Parse and set Config-Values from config.json
     ConfigHandler.validate_config_file_base_variables()
+    ConfigHandler.set_verbosity_level(args.v)
 
     # Initialize Base Classes
     dbms = DBHandler(DBHandler.SQLITE, db_name='job_scraper.sqlite')
@@ -84,7 +88,7 @@ def main():
     browser_handler.close_browser()
 
     # Print fetched vacancies from db to HTML
-    result_printer = ResultPrinter(dbms=dbms)
+    result_printer = ResultPrinter(dbms=dbms, platform_registry=platform_registry)
     result_printer.print_result_to_html(seach_topic_list=ConfigHandler.search_topics,
                                         open_html_after_finish=True)
 

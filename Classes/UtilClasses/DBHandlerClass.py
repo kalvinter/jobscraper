@@ -42,12 +42,13 @@ class DBHandler:
 
     # Main DB Connection Ref Obj
     db_engine = None
+    header = "---- # (DBHandler)"
 
     def __init__(self, dbtype, db_name):
         if dbtype in self.DB_ENGINE.keys():
             engine_url = self.DB_ENGINE[dbtype] + db_name
             self.db_engine = create_engine(engine_url)
-            print(self.db_engine)
+            print(f"{self.header}: INFO: Using the following DB-Engine: {self.db_engine}")
         else:
             raise ValueError("DBType does not exist!")
 
@@ -63,10 +64,10 @@ class DBHandler:
     def create_database_and_tables(self):
         try:
             Base.metadata.create_all(self.db_engine)
-            print("Tables created")
+            print(f"{self.header}: INFO: Tables created")
 
         except Exception as e:
-            print("Error occurred during Table creation!")
+            print(f"{self.header}: ERROR: Error occurred during Table creation!")
             print(e)
 
     def cleanup_job_postings_in_database(self):
@@ -97,7 +98,7 @@ class DBHandler:
                 result = connection.execute(query)
 
                 if update_query or insert_query:
-                    print(f"Database Return Code: {result}")
+                    print(f"{self.header}: INFO: Database Return Code: {result}")
 
                 elif select_query:
                     result_list = []
