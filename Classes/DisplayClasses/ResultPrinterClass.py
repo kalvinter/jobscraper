@@ -39,13 +39,13 @@ class ResultPrinter:
 
                     for platform in platform_names:
                         html_file.write(f'<li><a href="#{search_topic}_{platform}" class="contents_a">'
-                                        f'... Search Topic {search_topic} - {platform}</a></li>')
+                                        f'... Search-Topic {search_topic} - {platform}</a></li>')
 
                     html_file.write(f'</ul></div><div class="header_clear_area"></div>\n')
 
                 # Print main body with all entries
                 for search_topic in seach_topic_list:
-                    html_file.write(f'<h5>Search Type: {search_topic}</h5>\n')
+                    html_file.write(f"<h5>Search-Topic '{search_topic}'</h5>\n")
 
                     for platform in platform_names:
                         platform_instance = self.platform_registry.get_platform_instance(platform)
@@ -55,7 +55,7 @@ class ResultPrinter:
                             # was applied to this platform_instance
                             continue
 
-                        html_file.write(f'<h6 id="{search_topic}_{platform}">{platform}</h6>')
+                        html_file.write(f'<h6 id="{search_topic}_{platform}">{platform} - Job postings</h6>')
                         html_file.write('<div class="posting-list-wrapper">')
 
                         if not platform_instance.scrape_status[search_topic]:

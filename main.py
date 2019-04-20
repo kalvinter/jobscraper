@@ -29,12 +29,17 @@ The project's core-code can be found in the Classes-directory. It consists of th
 '''
 
 
+def _register_platforms(platform_registry: PlatformRegistry):
+    """ Register and instantiate all platforms that are implemented and stable so that they can be used """
+    platform_registry.register_new_platform(KarriereATHandler)
+    platform_registry.register_new_platform(StepStoneHandler)
+    platform_registry.register_new_platform(MonsterATHandler)
+    platform_registry.register_new_platform(JobsATHandler)
+
+
 def main():
     # Initialize CL-Parser
     parser = argparse.ArgumentParser()
-    parser.add_argument('--no-refetch',  action='store_true',
-                        help='Vacancies are not refetched. Operations are run against existing entries '
-                             'in the database')
     parser.add_argument('--platforms', action='store_true',
                         help='Prints all available platforms for scraping. Each platform can be added in the '
                              'config.json-File for scraping.')
@@ -56,12 +61,9 @@ def main():
 
     platform_registry = PlatformRegistry(browser=browser, dbms=dbms)
 
-    # Register and instantiate all platforms that are implemented and stable
-    platform_registry.register_new_platform(KarriereATHandler)
-    platform_registry.register_new_platform(StepStoneHandler)
-    platform_registry.register_new_platform(MonsterATHandler)
-    platform_registry.register_new_platform(JobsATHandler)
+    _register_platforms(platform_registry=platform_registry)
 
+    # If -platforms-flag is set, display all registered platforms and exit
     if args.platforms:
         print("\nRegistered Platforms:\n-----------------")
         for platform in PlatformRegistry.registered_platforms:
@@ -74,16 +76,15 @@ def main():
     # Clean up database and remove job-postings that are older than the retention-range
     dbms.cleanup_job_postings_in_database()
 
-    # If 'no-refetch' is not set, Fetch all current job postings
-    if not args.no_refetch:
+    # Check if all registered platforms exist as entries in the database
+    platform_registry.create_platform_entries_in_database()
 
-        platform_registry.create_platform_entries_in_database()
+    # Perform web-scraping
+    for platform_name in ConfigHandler.search_types_and_urls.keys():
+        platform = platform_registry.get_platform_instance(platform_name)
 
-        for platform_name in ConfigHandler.search_types_and_urls.keys():
-            platform = platform_registry.get_platform_instance(platform_name)
-
-            for search_topic, search_url in ConfigHandler.search_types_and_urls[platform_name].items():
-                platform.run(search_topic=search_topic, search_url=search_url)
+        for search_topic, search_url in ConfigHandler.search_types_and_urls[platform_name].items():
+            platform.run(search_topic=search_topic, search_url=search_url)
 
     browser_handler.close_browser()
 

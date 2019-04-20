@@ -31,7 +31,7 @@ Currently four major Austrian job-posting-websites are implemented:
 your downloaded webdriver's name.
 
 ```
-	"DRIVER_EXE_NAME": "chromedriver.exe",
+"DRIVER_EXE_NAME": "chromedriver.exe",
 ```
 
 ### Installation
@@ -57,27 +57,31 @@ py run_tests.py
 
 If any of the tests fails, please let me know by opening a new issue. 
 
-## Using the script
+## Using the JobScraper
 
-You can start the script by simply running the main.py-File
+You can start the scraper by simply running the main.py-file
 ```
 py main.py
 ```
 
-All options to customize the scraping can be changed in the **config.json**-File. 
-The file is located in the repository's root directory. There are four main config-options. 
+Using the flag -h shows help messages and further flags and available options.
+```
+py main.py -h
+```
 
-1) **DRIVER_EXE_NAME**: The file-name of your webdriver.exe-file. The script will look for this file-name in the folder "webdriver".
-2) **STOPWORDS**: If a job posting's title contains one of the stopwords defined here, the job posting will be skipped.
-3) **PLATFORMS**: For each of the implemented job-posting-website, add a search-url with a recognizable search-topic-name.
-4) **POSTING_RETENTION_IN_DAYS**: Specify the retention time of job postings in days. Any posting older than this value will be deleted.
+All options to customize the scraping can be changed in the **config.json**-File in the repository's root directory. There are four main config-options:
+
+1) **DRIVER_EXE_NAME**: The file-name of your webdriver.exe-file saved in the folder "webdriver".
+2) **STOPWORDS**: A job posting is skipped if it's title contains one of the stopwords defined here.
+3) **PLATFORMS**: Here you can specify for each implemented job-posting-websites which search-urls should be scraped.
+4) **POSTING_RETENTION_IN_DAYS**: Any job posting older than this value will be deleted from the database.
  
 
 ### How can I define my own search-queries?
-For each of the implemented job-posting-websites you can define a search-topic and search-url in config.json.
-The search-topic is just a name that will be associated with the scraped results.
+For each implemented job-posting-websites you can define a search-topic and search-url in config.json.
+The search-topic is just a name associated with the scraped results.
 
-In config.json-File you can simply add your own search-query by adding a new key-value-pair to the 
+In the config.json-file you can simply add your own search-query by adding a new key-value-pair to the 
 job-posting-platform of your choice.
 
 - *Example: If you want to scrape all job-postings on karriere.at, open the website in your browser, select 
@@ -96,10 +100,10 @@ your search topic (here it is "New Topic") and the value is the URL from your br
 ### How can I define my own stopwords?
 Simply add your own stopwords as string to the list with the key "STOPWORDS" in config.json.
 ```
-	 "STOPWORDS": [
-		"new_stopword_1",
-		"new_stopword_2"
-	],
+ "STOPWORDS": [
+    "new_stopword_1",
+    "new_stopword_2"
+],
 
 ```
 
@@ -110,13 +114,13 @@ You can specify the retention time of job postings in days in the config.json-fi
 Enter a valid integer for the number of days. Any posting older than this value will be deleted.
 
 ```
-	"POSTING_RETENTION_IN_DAYS": 14
+"POSTING_RETENTION_IN_DAYS": 14
 ```
  
 Enter the value "disabled" to disable auto-deletion.
 
 ```
-	"POSTING_RETENTION_IN_DAYS": "disabled"
+"POSTING_RETENTION_IN_DAYS": "disabled"
 ```
 
 
@@ -129,10 +133,42 @@ class NewPlatformHandler(PlatformHandlerBase):
     platform_name = 'NEWPLATFORM.AT'
 ```
 
-After that simply register the new PlatformHandler-Class in the main-function
-by writing 
+When overwriting the _get_job_postings-function you only have to make sure that you
+- **Return a list** where each job-posting is dictionary with keys corresponding to the Vacancies-table:
 ```
-platform_registry.register_new_platform(NewPlatformHandler)
+{
+	"platform": self.platform_name,
+	"company": company,
+	"url": url,
+	"title": title,
+	"date": date,
+	"location": location,
+}
+```
+- **In case of an exception**, set self.scrape_status[search_topic] to False and return an empty list. The scrape_status variable stores the success-status of each scrapings.
+```
+except (NoSuchElementException, ElementNotVisibleException) as e:
+	... do something ...
+	self.scrape_status[search_topic] = False
+	return []
+```
+
+After that, register the new PlatformHandler-Class in _register_platforms-function 
+in main.py: 
+```
+def _register_platforms(platform_registry: PlatformRegistry):
+    ...
+    platform_registry.register_new_platform(NewPlatformHandler)
+```
+
+Finally, add the new platform together with a search-topic and a search ULR in the config.json-File:
+
+```
+"PLATFORMS": {
+		"NEWPLATTFORM.at": {
+			"New Topic": "https://www.newplatfomr.at/"
+		}
+	}
 ```
 
 ## Built With
